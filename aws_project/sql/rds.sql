@@ -1,4 +1,6 @@
 BEGIN;
+CREATE DATABASE ec2;
+ALTER DATABASE ec2 OWNER TO ken;
 --
 -- Create model Images
 --
