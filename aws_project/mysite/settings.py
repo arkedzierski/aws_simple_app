@@ -76,22 +76,23 @@ WSGI_APPLICATION = 'mysite.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
-if 'RDS_HOSTNAME' in os.environ:
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.postgresql',
-            'NAME': os.environ['RDS_DB_NAME'],
-            'USER': os.environ['RDS_USERNAME'],
-            'PASSWORD': os.environ['RDS_PASSWORD'],
-            'HOST': os.environ['RDS_HOSTNAME'],
-            'PORT': os.environ['RDS_PORT'],
-            # 'NAME': 'mydatabase',
-            # 'USER': 'mydatabaseuser',
-            # 'PASSWORD': 'mypassword',
-            # 'HOST': '127.0.0.1',
-            # 'PORT': '5432',
-        }
+DATABASES = {
+    'default': {
+        'ENGINE': 'django_iam_dbauth.aws.postgresql',
+        'NAME': 'ec2',
+        'USER': 'postgres',
+        'HOST': 'rds-prv-db.cp3npq3sbitq.eu-central-1.rds.amazonaws.com',
+        'OPTIONS': {
+            'user_iam_auth': True,
+            'sslmode': 'require',
+        },
+        # 'NAME': 'mydatabase',
+        # 'USER': 'mydatabaseuser',
+        # 'PASSWORD': 'mypassword',
+        # 'HOST': '127.0.0.1',
+        # 'PORT': '5432',
     }
+}
 
 
 # Password validation
