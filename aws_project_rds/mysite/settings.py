@@ -39,7 +39,6 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rds.apps.RdsConfig',
-    's3.apps.S3Config',
 ]
 
 MIDDLEWARE = [
@@ -86,9 +85,10 @@ DATABASES = {
             'use_iam_auth': True,
             'sslmode': 'require',
         },
-        # 'NAME': 'mydatabase',
-        # 'USER': 'mydatabaseuser',
-        # 'PASSWORD': 'mypassword',
+        # 'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        # 'NAME': 'ec',
+        # 'USER': 'postgres',
+        # 'PASSWORD': 'postgres',
         # 'HOST': '127.0.0.1',
         # 'PORT': '5432',
     }
