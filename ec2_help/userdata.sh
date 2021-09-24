@@ -11,7 +11,7 @@ python3 -m venv venv
 source venv/bin/activate
 python3 -m pip install --upgrade pip
 git clone https://github.com/arkedzierski/aws_simple_app.git aws
-pip3 install -r aws/aws_project/requirements.txt
+pip3 install -r aws/aws_project_rds/requirements.txt
 mkdir ~/.aws
 echo -e "[default]\nregion = eu-central-1" > ~/.aws/config
 cd /home/ubuntu/aws/aws_project_rds
