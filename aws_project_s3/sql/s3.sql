@@ -1,4 +1,8 @@
 BEGIN;
+CREATE DATABASE s3;
+CREATE USER ken;
+ALTER DATABASE s3 OWNER TO ken;
+GRANT rds_iam TO ken;
 --
 -- Create model Files
 --
