@@ -77,8 +77,20 @@ WSGI_APPLICATION = 'mysite.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django_iam_dbauth.aws.postgresql',
+        'NAME': 's3',
+        'USER': 'ken',
+        'HOST': 'rds-prv-db.cp3npq3sbitq.eu-central-1.rds.amazonaws.com',
+        'OPTIONS': {
+            'use_iam_auth': True,
+            'sslmode': 'require',
+        },
+        # 'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        # 'NAME': 's3',
+        # 'USER': 'postgres',
+        # 'PASSWORD': 'postgres',
+        # 'HOST': '127.0.0.1',
+        # 'PORT': '5432',
     }
 }
 
