@@ -5,6 +5,7 @@ from rds.views import index, DocumentCreateView
 
 
 urlpatterns = [
-    path('', index, name='index'),
-    path('s3/', DocumentCreateView.as_view(), name='s3'),
+    path('', RedirectView.as_view(url='/db/')),
+    path('db/', index, name='index'),
+    path('add/', DocumentCreateView.as_view(), name='s3'),
 ]
