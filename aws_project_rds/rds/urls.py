@@ -1,6 +1,7 @@
 from django.urls import path
 
 from rds.views import index, DocumentCreateView
+from django.views.generic.base import RedirectView
 
 
 
