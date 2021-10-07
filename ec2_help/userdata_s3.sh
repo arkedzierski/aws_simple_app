@@ -15,7 +15,6 @@ pip3 install -r aws/aws_project_rds/requirements.txt
 mkdir ~/.aws
 echo -e "[default]\nregion = eu-central-1" > ~/.aws/config
 cd /home/ubuntu/aws/aws_project_s3
-aws s3 cp s3://filestos3/db.sqlite3 .
 python3 manage.py migrate
 screen -d -m python3 manage.py runserver 0.0.0.0:8000
 EOF

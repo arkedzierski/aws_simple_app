@@ -80,7 +80,7 @@ DATABASES = {
         'ENGINE': 'django_iam_dbauth.aws.postgresql',
         'NAME': 's3',
         'USER': 'ken',
-        'HOST': 'rds-prv-db.cp3npq3sbitq.eu-central-1.rds.amazonaws.com',
+        'HOST': 'akedzierski-db.c6nhgfuujgle.us-east-2.rds.amazonaws.com',
         'OPTIONS': {
             'use_iam_auth': True,
             'sslmode': 'require',
@@ -142,5 +142,5 @@ DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
 
 # AWS_ACCESS_KEY_ID = 'AWS_ACCESS_KEY_ID'
 # AWS_SECRET_ACCESS_KEY = 'AWS_SECRET_ACCESS_KEY'
-AWS_STORAGE_BUCKET_NAME = 'filestos3'
+AWS_STORAGE_BUCKET_NAME = 'akedzierski-s3'
 AWS_QUERYSTRING_AUTH = True

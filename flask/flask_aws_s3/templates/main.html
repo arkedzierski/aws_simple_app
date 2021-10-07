@@ -1,0 +1,26 @@
+<form enctype="multipart/form-data" action="/s3" method="post" id="files_form" novalidate>
+    <div>
+        <fieldset class="module aligned ">
+            <div class="form-row field-upload">
+                <div>
+                    <label class="required" for="id_upload">Upload:</label>
+                    <input type="file" name="upload" required id="id_upload">
+                </div>
+            </div>
+        </fieldset>
+        <div class="submit-row">
+            <input type="submit" value="Save" class="default" name="save">
+        </div>
+    </div>
+</form>
+<div>
+    {% if latest_files %}
+        <ul>
+        {% for file in latest_files %}
+            <li><a href="/download/{{ file.Key }}"> {{ file.Key }} </a></li>
+        {% endfor %}
+        </ul>
+    {% else %}
+        p>No images are available.</p>
+    {% endif %}
+</div>

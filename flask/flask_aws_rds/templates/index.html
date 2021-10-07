@@ -1,0 +1,9 @@
+{% if latest_images %}
+    <ul>
+    {% for image in latest_images %}
+        <li>{{ image.name }}</li>
+    {% endfor %}
+    </ul>
+{% else %}
+    <p>No images are available.</p>
+{% endif %}
