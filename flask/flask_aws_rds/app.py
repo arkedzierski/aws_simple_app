@@ -1,7 +1,8 @@
-from flask import Flask, render_template, abort, jsonify
+from flask import Flask, render_template, abort, jsonify, request
 from flask.wrappers import Response
 from flask_sqlalchemy import SQLAlchemy
 
+import urllib
 import datetime
 import boto3
 
@@ -15,7 +16,8 @@ token = client.generate_db_auth_token(
     Port=5432,
     DBUsername=RDS_USR
 )
-app.config['SQLALCHEMY_DATABASE_URI'] = f'postgresql://{RDS_USR}:{token}@{RDS_ENDPOINT}/{RDS_DBNAME}?sslmode=verify-ca&sslrootcert=rds-combined-ca-bundle.pem'
+passwd = urllib.parse.quote(token)
+app.config['SQLALCHEMY_DATABASE_URI'] = f'postgresql://{RDS_USR}:{passwd}@{RDS_ENDPOINT}/{RDS_DBNAME}?sslmode=require'
 
 # app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:postgres@localhost/ec'
 # app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
@@ -38,6 +40,8 @@ def root():
 @app.route('/db')
 def index():
     images = db.session.execute('SELECT * FROM rds_images LIMIT 10;')
+    if not len(images.all()):
+        images = False
     return render_template('index.html', latest_images=images)
 
 @app.route("/add", methods=['GET'])
