@@ -1,3 +1,4 @@
+import botocore
 from flask import Flask, abort, request, flash, redirect
 import boto3
 from flask.templating import render_template
@@ -18,6 +19,27 @@ def s3_client():
     """ :type : pyboto3.s3 """
     return client
 
+def s3_create_presigned_url(bucket_name, object_name, expiration=3600):
+    """Generate a presigned URL to share an S3 object
+
+    :param bucket_name: string
+    :param object_name: string
+    :param expiration: Time in seconds for the presigned URL to remain valid
+    :return: Presigned URL as string. If error, returns None.
+    """
+
+    # Generate a presigned URL for the S3 object
+    client = s3_client()
+    try:
+        response = client.generate_presigned_url('get_object',
+                                                    Params={'Bucket': bucket_name,
+                                                            'Key': object_name},
+                                                    ExpiresIn=expiration)
+        return response
+    except botocore.exceptions.ClientError as e:
+        print(e)
+        return None
+
 def s3_list_files(s3_bucket_name):
     """
     Function to list files in a given S3 bucket
@@ -29,11 +51,12 @@ def s3_list_files(s3_bucket_name):
 
     return contents
 
-def s3_upload_files(inp_file_name, s3_bucket_name, content_type):
+def s3_upload_files(file_data, s3_bucket_name, content_type, filename):
     client = s3_client()
-    upload_file_response = client.put_object(Body=inp_file_name,
+    upload_file_response = client.put_object(Body=file_data,
                                              Bucket=s3_bucket_name,
-                                             ContentType=content_type)
+                                             ContentType=content_type,
+                                             Key=filename)
     print(f" ** Response - {upload_file_response}")
 
 
@@ -71,12 +94,14 @@ def upload_files_to_s3():
  
             
  
-            s3_upload_files(upload, BUCKET_NAME, file_name,content_type )
-            flash(f'Success - {upload} Is uploaded to {BUCKET_NAME}', 'success')
+            s3_upload_files(upload, BUCKET_NAME, content_type, file_name )
  
         else:
             flash(f'Something goes wrong', 'danger')
- 
-    return render_template('main.html', latest_files=s3_list_files(BUCKET_NAME)[:10])
+    s3files = s3_list_files(BUCKET_NAME)[:10]
+    latest_files = []
+    for file in s3files:
+        latest_files.append({'Name': file['Key'], 'url': s3_create_presigned_url(BUCKET_NAME, file['Key'])})
+    return render_template('main.html', latest_files=latest_files)
 
 

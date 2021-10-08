@@ -17,7 +17,7 @@
     {% if latest_files %}
         <ul>
         {% for file in latest_files %}
-            <li><a href="/download/{{ file.Key }}"> {{ file.Key }} </a></li>
+            <li><a href="{{ file.url }}"> {{ file.Name }} </a></li>
         {% endfor %}
         </ul>
     {% else %}
