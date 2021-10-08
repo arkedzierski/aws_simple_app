@@ -1,12 +1,18 @@
-import botocore
 from flask import Flask, abort, request, flash, redirect
-import boto3
 from flask.templating import render_template
 from werkzeug.utils import secure_filename
+
+import botocore
+import boto3
+import requests
 
 
 app = Flask(__name__)
 BUCKET_NAME = "akedzierski-s3"
+
+def get_rds_record_number():
+    response = requests.get('http://akedzierski-lb-apps-1142467814.us-east-2.elb.amazonaws.com/num').json()
+    return response['Total']
 
 def s3_client():
     """
@@ -102,6 +108,6 @@ def upload_files_to_s3():
     latest_files = []
     for file in s3files:
         latest_files.append({'Name': file['Key'], 'url': s3_create_presigned_url(BUCKET_NAME, file['Key'])})
-    return render_template('main.html', latest_files=latest_files)
+    return render_template('main.html', latest_files=latest_files, rows=get_rds_record_number())
 
 
