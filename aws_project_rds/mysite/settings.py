@@ -80,7 +80,7 @@ DATABASES = {
         'ENGINE': 'django_iam_dbauth.aws.postgresql',
         'NAME': 'ec2',
         'USER': 'ken',
-        'HOST': 'rds-prv-db.cp3npq3sbitq.eu-central-1.rds.amazonaws.com',
+        'HOST': 'akedzierski-db.c6nhgfuujgle.us-east-2.rds.amazonaws.com',
         'OPTIONS': {
             'use_iam_auth': True,
             'sslmode': 'require',
