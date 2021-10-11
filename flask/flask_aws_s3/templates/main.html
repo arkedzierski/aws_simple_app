@@ -1,29 +1,33 @@
-<form enctype="multipart/form-data" action="/s3" method="post" id="files_form" novalidate>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+  </head>
+  <body>
+    <!-- Copy the 'url' value returned by S3Client.generate_presigned_post() -->
+    <form action="{{ data.upload_url }}" method="post" enctype="multipart/form-data">
+      <!-- Copy the 'fields' key:values returned by S3Client.generate_presigned_post() -->
+      <input type="hidden" name="key" value="{{ data.fields.key }}/{{ file_to_s3.Name }}" />
+      <input type="hidden" name="AWSAccessKeyId" value="{{ data.fields.AWSAccessKeyId  }}" />
+      <input type="hidden" name="policy" value="{{ data.fields.policy }}" />
+      <input type="hidden" name="signature" value="{{ data.fields.signature }}" />
+    File:
+      <input type="file"   name="file_to_s3" /> <br />
+      <input type="submit" name="submit" value="Upload to Amazon S3" />
+    </form>
+
     <div>
-        <fieldset class="module aligned ">
-            <div class="form-row field-upload">
-                <div>
-                    <label class="required" for="id_upload">Upload:</label>
-                    <input type="file" name="upload" required id="id_upload">
-                </div>
-            </div>
-        </fieldset>
-        <div class="submit-row">
-            <input type="submit" value="Save" class="default" name="save">
-        </div>
+        {% if latest_files %}
+            <ul>
+            {% for file in latest_files %}
+                <li><a href="{{ file.url }}"> {{ file.Name }} </a></li>
+            {% endfor %}
+            </ul>
+        {% else %}
+            p>No images are available.</p>
+        {% endif %}
     </div>
-</form>
-<div>
-    {% if latest_files %}
-        <ul>
-        {% for file in latest_files %}
-            <li><a href="{{ file.url }}"> {{ file.Name }} </a></li>
-        {% endfor %}
-        </ul>
-    {% else %}
-        p>No images are available.</p>
-    {% endif %}
-</div>
-<div>
-    <h1>Total numbers of rows in DB: {{ rows }}</h1>
-</div>
+    <div>
+        <h1>Total numbers of rows in DB: {{ rows }}</h1>
+    </div>
+  </body>
+</html>

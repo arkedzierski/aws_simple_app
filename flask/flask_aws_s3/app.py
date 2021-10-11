@@ -1,3 +1,4 @@
+from types import SimpleNamespace
 from flask import Flask, abort, request, flash, redirect
 from flask.templating import render_template
 from werkzeug.utils import secure_filename
@@ -5,6 +6,8 @@ from werkzeug.utils import secure_filename
 import botocore
 import boto3
 import requests
+import string
+import random
 
 
 app = Flask(__name__)
@@ -46,6 +49,39 @@ def s3_create_presigned_url(bucket_name, object_name, expiration=3600):
         print(e)
         return None
 
+def s3_create_presigned_post(bucket_name, object_name,
+                          fields=None, conditions=None, expiration=3600):
+    """Generate a presigned URL S3 POST request to upload a file
+
+    :param bucket_name: string
+    :param object_name: string
+    :param fields: Dictionary of prefilled form fields
+    :param conditions: List of conditions to include in the policy
+    :param expiration: Time in seconds for the presigned URL to remain valid
+    :return: Dictionary with the following keys:
+        url: URL to post to
+        fields: Dictionary of form fields and values to submit with the POST
+    :return: None if error.
+    """
+
+    # Generate a presigned S3 POST URL
+    client = s3_client()
+    try:
+        response = client.generate_presigned_post(bucket_name,
+                                                     object_name,
+                                                     Fields=fields,
+                                                     Conditions=conditions,
+                                                     ExpiresIn=expiration)
+    except ClientError as e:
+        logging.error(e)
+        return None
+
+    # The response contains the presigned URL and required fields
+    return SimpleNamespace(success=True, data={
+            'upload_url': response['url'],
+            'fields': response['fields']
+        })
+
 def s3_list_files(s3_bucket_name):
     """
     Function to list files in a given S3 bucket
@@ -76,38 +112,39 @@ def root():
 
 @app.route('/s3', methods=['GET', 'POST'])
 def upload_files_to_s3():
-    if request.method == 'POST':
+    # if request.method == 'POST':
  
-        # No file selected
-        if 'upload' not in request.files:
-            flash('No file part')
-            return redirect(request.url)
-        upload = request.files['upload']
-        content_type = request.mimetype
+    #     # No file selected
+    #     if 'upload' not in request.files:
+    #         flash('No file part')
+    #         return redirect(request.url)
+    #     upload = request.files['upload']
+    #     content_type = request.mimetype
  
-        # if empty files
-        if upload.filename == '':
-            flash(f' *** No files Selected', 'danger')
+    #     # if empty files
+    #     if upload.filename == '':
+    #         flash(f' *** No files Selected', 'danger')
  
-        # file uploaded and check
-        if upload:
+    #     # file uploaded and check
+    #     if upload:
  
  
-            file_name = secure_filename(upload.filename)
+    #         file_name = secure_filename(upload.filename)
  
-            print(f" *** The file name to upload is {file_name}")
-            print(f" *** The file full path  is {upload}")
+    #         print(f" *** The file name to upload is {file_name}")
+    #         print(f" *** The file full path  is {upload}")
  
             
  
-            s3_upload_files(upload, BUCKET_NAME, content_type, file_name )
+    #         s3_upload_files(upload, BUCKET_NAME, content_type, file_name )
  
-        else:
-            flash(f'Something goes wrong', 'danger')
+    #     else:
+    #         flash(f'Something goes wrong', 'danger')
     s3files = s3_list_files(BUCKET_NAME)[:10]
     latest_files = []
     for file in s3files:
         latest_files.append({'Name': file['Key'], 'url': s3_create_presigned_url(BUCKET_NAME, file['Key'])})
-    return render_template('main.html', latest_files=latest_files, rows=get_rds_record_number())
+    upload_data = s3_create_presigned_post(BUCKET_NAME, ''.join(random.choice(string.ascii_lowercase) for i in range(8)))
+    return render_template('main.html', latest_files=latest_files, rows=get_rds_record_number(), data=upload_data)
 
 

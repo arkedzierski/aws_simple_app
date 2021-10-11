@@ -40,7 +40,10 @@ def root():
 @app.route('/db')
 def index():
     images = db.session.execute('SELECT * FROM rds_images LIMIT 10;')
-    if not len(images.all()):
+    try:
+        images = [row[1] for row in images]
+    except Exception as e:
+        print(e)
         images = False
     return render_template('index.html', latest_images=images)
 
