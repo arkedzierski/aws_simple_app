@@ -14,7 +14,7 @@ app = Flask(__name__)
 BUCKET_NAME = "akedzierski-s3"
 
 def get_rds_record_number():
-    response = requests.get('http://akedzierski-lb-apps-1142467814.us-east-2.elb.amazonaws.com/num').json()
+    response = requests.get('http://akedzierski-lb-app-145495019.us-east-2.elb.amazonaws.com/num').json()
     return response['Total']
 
 def s3_client():

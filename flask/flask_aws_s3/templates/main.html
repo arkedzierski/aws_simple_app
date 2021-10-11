@@ -6,14 +6,14 @@
     <!-- Copy the 'url' value returned by S3Client.generate_presigned_post() -->
     <form action="{{ data.upload_url }}" method="post" enctype="multipart/form-data">
       <!-- Copy the 'fields' key:values returned by S3Client.generate_presigned_post() -->
-      <input type="hidden" name="key" value="{{ data.key }}/{{ file_to_s3.Name }}" />
-      <input type="hidden" name="x-amz-algorithm" value="{{ data.x-amz-algorithm  }}" />
-      <input type="hidden" name="x-amz-credential" value="{{ data.x-amz-credential  }}" />
-      <input type="hidden" name="x-amz-security-token" value="{{ data.x-amz-security-token  }}" />
-      <input type="hidden" name="policy" value="{{ data.policy }}" />
-      <input type="hidden" name="signature" value="{{ data.signature }}" />
+      <input type="hidden" name="key" value="{{ data['key'] }}" />
+      <input type="hidden" name="x-amz-algorithm" value="{{ data['x-amz-algorithm']  }}" />
+      <input type="hidden" name="x-amz-credential" value="{{ data['x-amz-credential']  }}" />
+      <input type="hidden" name="x-amz-security-token" value="{{ data['x-amz-security-token']  }}" />
+      <input type="hidden" name="policy" value="{{ data['policy'] }}" />
+      <input type="hidden" name="signature" value="{{ data['signature'] }}" />
     File:
-      <input type="file"   name="file_to_s3" /> <br />
+      <input type="file"   name="file" /> <br />
       <input type="submit" name="submit" value="Upload to Amazon S3" />
     </form>
 
