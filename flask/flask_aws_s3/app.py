@@ -77,10 +77,15 @@ def s3_create_presigned_post(bucket_name, object_name,
         return None
 
     # The response contains the presigned URL and required fields
-    return SimpleNamespace(success=True, data={
+    return {
             'upload_url': response['url'],
-            'fields': response['fields']
-        })
+            'key': response['fields']['key'],
+            'x-amz-algorithm': response['fields']['x-amz-algorithm'],
+            'x-amz-credential': response['fields']['x-amz-security-token'],
+            'x-amz-security-token': response['fields']['x-amz-security-token'],
+            'policy': response['fields']['policy'],
+            'signature': response['fields']['x-amz-signature'],
+        }
 
 def s3_list_files(s3_bucket_name):
     """

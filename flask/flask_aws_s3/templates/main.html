@@ -7,7 +7,9 @@
     <form action="{{ data.upload_url }}" method="post" enctype="multipart/form-data">
       <!-- Copy the 'fields' key:values returned by S3Client.generate_presigned_post() -->
       <input type="hidden" name="key" value="{{ data.fields.key }}/{{ file_to_s3.Name }}" />
-      <input type="hidden" name="AWSAccessKeyId" value="{{ data.fields.AWSAccessKeyId  }}" />
+      <input type="hidden" name="x-amz-algorithm" value="{{ data.fields.x-amz-algorithm  }}" />
+      <input type="hidden" name="x-amz-credential" value="{{ data.fields.x-amz-credential  }}" />
+      <input type="hidden" name="x-amz-security-token" value="{{ data.fields.x-amz-security-token  }}" />
       <input type="hidden" name="policy" value="{{ data.fields.policy }}" />
       <input type="hidden" name="signature" value="{{ data.fields.signature }}" />
     File:
