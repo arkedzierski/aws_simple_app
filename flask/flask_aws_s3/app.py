@@ -1,13 +1,10 @@
 from types import SimpleNamespace
-from flask import Flask, abort, request, flash, redirect
+from flask import Flask, abort, request, redirect, url_for
 from flask.templating import render_template
-from werkzeug.utils import secure_filename
 
 import botocore
 import boto3
 import requests
-import string
-import random
 
 
 app = Flask(__name__)
@@ -76,7 +73,7 @@ def s3_create_presigned_post(bucket_name, object_name,
                                                      Fields=fields,
                                                      Conditions=conditions,
                                                      ExpiresIn=expiration)
-    except ClientError as e:
+    except botocore.exceptions.ClientError as e:
         logging.error(e)
         return None
 
@@ -113,40 +110,13 @@ def root():
 
 @app.route('/s3', methods=['GET', 'POST'])
 def upload_files_to_s3():
-    # if request.method == 'POST':
- 
-    #     # No file selected
-    #     if 'upload' not in request.files:
-    #         flash('No file part')
-    #         return redirect(request.url)
-    #     upload = request.files['upload']
-    #     content_type = request.mimetype
- 
-    #     # if empty files
-    #     if upload.filename == '':
-    #         flash(f' *** No files Selected', 'danger')
- 
-    #     # file uploaded and check
-    #     if upload:
- 
- 
-    #         file_name = secure_filename(upload.filename)
- 
-    #         print(f" *** The file name to upload is {file_name}")
-    #         print(f" *** The file full path  is {upload}")
- 
-            
- 
-    #         s3_upload_files(upload, BUCKET_NAME, content_type, file_name )
- 
-    #     else:
-    #         flash(f'Something goes wrong', 'danger')
+    if request.method == "POST":
+        return redirect(url_for('/3'))
     s3files = s3_list_files(BUCKET_NAME)[:10]
     latest_files = []
     for file in s3files:
         latest_files.append({'Name': file['Key'], 'url': s3_create_presigned_url(BUCKET_NAME, file['Key'])})
-    key = ''.join(random.choice(string.ascii_lowercase) for i in range(8))
-    upload_data = s3_create_presigned_post(BUCKET_NAME, key, conditions=[["starts-with", "$key", key]])
+    upload_data = s3_create_presigned_post(BUCKET_NAME, '${filename}')
     return render_template('main.html', latest_files=latest_files, rows=get_rds_record_number(), data=upload_data)
 
 

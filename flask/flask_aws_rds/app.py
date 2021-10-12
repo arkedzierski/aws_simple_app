@@ -1,5 +1,4 @@
 from flask import Flask, render_template, abort, jsonify, request
-from flask.wrappers import Response
 from flask_sqlalchemy import SQLAlchemy
 
 import urllib

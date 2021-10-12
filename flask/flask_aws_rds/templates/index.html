@@ -1,9 +1,19 @@
-{% if latest_images %}
-    <ul>
-    {% for image in latest_images %}
-        <li>{{ image }}</li>
-    {% endfor %}
-    </ul>
-{% else %}
-    <p>No images are available.</p>
-{% endif %}
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+  </head>
+  <body>  
+    <div>
+        <h1>Up to 10 last database entry:</h1>
+        {% if latest_images %}
+            <ul>
+            {% for image in latest_images %}
+                <li>{{ image }}</li>
+            {% endfor %}
+            </ul>
+        {% else %}
+            <p>No images are available.</p>
+        {% endif %}
+    </div>
+  </body>
+</html>

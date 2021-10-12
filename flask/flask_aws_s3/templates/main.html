@@ -7,7 +7,7 @@
     <!-- Copy the 'url' value returned by S3Client.generate_presigned_post() -->
     <form action="{{ data.url }}" method="post" enctype="multipart/form-data">
       <!-- Copy the 'fields' key:values returned by S3Client.generate_presigned_post() -->
-      <input type="hidden" name="key" value="{{ data.fields['key'] }}/${filename}" />
+      <input type="hidden" name="key" value="${filename}" />
       <input type="hidden" name="X-Amz-Algorithm" value="{{ data.fields['x-amz-algorithm']  }}" />
       <input type="hidden" name="X-Amz-Credential" value="{{ data.fields['x-amz-credential']  }}" />
       <input type="hidden" name="X-Amz-Date" value="{{ data.fields['x-amz-date']  }}" />
@@ -20,6 +20,7 @@
     </form>
 
     <div>
+      <h1>Ten files from S3:</h1>
         {% if latest_files %}
             <ul>
             {% for file in latest_files %}
