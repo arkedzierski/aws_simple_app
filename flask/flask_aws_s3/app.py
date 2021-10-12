@@ -23,8 +23,12 @@ def s3_client():
          Purpose: get s3 client
         :returns: s3
     """
+    sts_client = boto3.client('sts')
+    assumed_role_object = sts_client.assume_role( RoleArn='arn:aws:iam::890769921003:role/akedzierski-iam_r-access-snet-prv-to-s3', RoleSessionName="AssumeRoleSession1" )
+    credentials = assumed_role_object['Credentials']
+
     session = boto3.session.Session()
-    client = session.client('s3')
+    client = session.client('s3', aws_access_key_id=credentials['AccessKeyId'], aws_secret_access_key=credentials['SecretAccessKey'], aws_session_token=credentials['SessionToken'])
     """ :type : pyboto3.s3 """
     return client
 
@@ -141,7 +145,8 @@ def upload_files_to_s3():
     latest_files = []
     for file in s3files:
         latest_files.append({'Name': file['Key'], 'url': s3_create_presigned_url(BUCKET_NAME, file['Key'])})
-    upload_data = s3_create_presigned_post(BUCKET_NAME, ''.join(random.choice(string.ascii_lowercase) for i in range(8)))
+    key = ''.join(random.choice(string.ascii_lowercase) for i in range(8))
+    upload_data = s3_create_presigned_post(BUCKET_NAME, key, conditions=[["starts-with", "$key", key]])
     return render_template('main.html', latest_files=latest_files, rows=get_rds_record_number(), data=upload_data)
 
 
