@@ -1,4 +1,4 @@
-from flask import Flask, render_template, abort, jsonify, request
+from flask import Flask, render_template, abort, jsonify, request, url_for, redirect
 from flask_sqlalchemy import SQLAlchemy
 
 import urllib
@@ -56,7 +56,7 @@ def imageadd():
     entry = Rds_images(name=pname)
     db.session.add(entry)
     db.session.commit()
-    return render_template("index.html")
+    return redirect(url_for('index'))
 
 @app.route('/num')
 def db_entry_number():

@@ -1,5 +1,5 @@
 from types import SimpleNamespace
-from flask import Flask, abort, request, redirect, url_for
+from flask import Flask, abort, request
 from flask.templating import render_template
 
 import botocore
@@ -74,7 +74,7 @@ def s3_create_presigned_post(bucket_name, object_name,
                                                      Conditions=conditions,
                                                      ExpiresIn=expiration)
     except botocore.exceptions.ClientError as e:
-        logging.error(e)
+        print(e)
         return None
 
     # The response contains the presigned URL and required fields
@@ -108,10 +108,8 @@ def page_not_found(error):
 def root():
     abort(404)
 
-@app.route('/s3', methods=['GET', 'POST'])
+@app.route('/s3', methods=['GET'])
 def upload_files_to_s3():
-    if request.method == "POST":
-        return redirect(url_for('/3'))
     s3files = s3_list_files(BUCKET_NAME)[:10]
     latest_files = []
     for file in s3files:
