@@ -11,10 +11,10 @@ python3 -m venv venv
 source venv/bin/activate
 python3 -m pip install --upgrade pip
 git clone https://github.com/arkedzierski/aws_simple_app.git aws
-pip3 install -r aws/aws_project_rds/requirements.txt
+pip3 install -r aws/django/aws_project_rds/requirements.txt
 mkdir ~/.aws
 echo -e "[default]\nregion = us-east-2" > ~/.aws/config
-cd /home/ubuntu/aws/aws_project_s3
+cd /home/ubuntu/aws/django/aws_project_s3
 python3 manage.py migrate
 screen -d -m python3 manage.py runserver 0.0.0.0:8000
 EOF
