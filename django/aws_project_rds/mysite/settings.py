@@ -38,7 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    's3.apps.S3Config',
+    'rds.apps.RdsConfig',
 ]
 
 MIDDLEWARE = [
@@ -74,19 +74,22 @@ WSGI_APPLICATION = 'mysite.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
+RDS_ENDPOINT = os.environ.get('RDS_ENDPOINT')
+RDS_USR = os.environ.get('RDS_USER')
+RDS_DBNAME = os.environ.get('RDS_DBNAME')
 
 DATABASES = {
     'default': {
         'ENGINE': 'django_iam_dbauth.aws.postgresql',
-        'NAME': 's3',
-        'USER': 'ken',
-        'HOST': 'akedzierski-db.c6nhgfuujgle.us-east-2.rds.amazonaws.com',
+        'NAME': RDS_DBNAME,
+        'USER': RDS_USR,
+        'HOST': RDS_ENDPOINT,
         'OPTIONS': {
             'use_iam_auth': True,
             'sslmode': 'require',
         },
         # 'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        # 'NAME': 's3',
+        # 'NAME': 'ec',
         # 'USER': 'postgres',
         # 'PASSWORD': 'postgres',
         # 'HOST': '127.0.0.1',
@@ -137,10 +140,3 @@ STATIC_URL = '/static/'
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-
-DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
-
-# AWS_ACCESS_KEY_ID = 'AWS_ACCESS_KEY_ID'
-# AWS_SECRET_ACCESS_KEY = 'AWS_SECRET_ACCESS_KEY'
-AWS_STORAGE_BUCKET_NAME = 'akedzierski-s3'
-AWS_QUERYSTRING_AUTH = True
