@@ -76,7 +76,7 @@ resource "aws_route_table" "rtb-prv" {
 
   route {
     cidr_block = "0.0.0.0/0"
-    gateway_id = aws_nat_gateway.nat-sb1.id
+    nat_gateway_id = aws_nat_gateway.nat-sb1.id
   }
 
   tags = { Name = "${local.name_suffix}-rtb-prv" }
@@ -214,31 +214,17 @@ resource "aws_security_group" "sg-ssh-bastion" {
 # IAM Access to S3
 resource "aws_iam_role" "role-access-to-s3-bucket" {
   name = "${local.name_suffix}-role-access-to-s3-bucket"
-  assume_role_policy = <<EOF
-{
-  "Version": "2012-10-17",
-  "Statement": [
-    {
-      "Effect": "Allow",
-      "Principal": {
-        "Service": "ecs-tasks.amazonaws.com"
-      },
-      "Action": "sts:AssumeRole"
-    }
-  ]
-}
-EOF
+  assume_role_policy = data.aws_iam_policy_document.instance-assume-role-policy.json
+  managed_policy_arns = [aws_iam_policy.policy-access-to-s3-bucket.arn, aws_iam_policy.policy-sts-allow-get-token.arn]
 }
 
-resource "aws_iam_instance_profile" "instanceprofile-bucket-s3" {
-  name = "${local.name_suffix}-instanceprofile-bucket-s3"
-  role = aws_iam_role.role-access-to-s3-bucket.name
-}
+# resource "aws_iam_instance_profile" "instanceprofile-bucket-s3" {
+#   name = "${local.name_suffix}-role-access-to-s3-bucket"
+#   role = aws_iam_role.role-access-to-s3-bucket.name
+# }
 
-resource "aws_iam_role_policy" "policy-access-to-s3-bucket" {
+resource "aws_iam_policy" "policy-access-to-s3-bucket" {
   name = "${local.name_suffix}-policy-access-to-s3-bucket"
-  role = aws_iam_role.role-access-to-s3-bucket.name
-
   policy = <<EOF
 {
     "Version": "2012-10-17",
@@ -261,10 +247,8 @@ resource "aws_iam_role_policy" "policy-access-to-s3-bucket" {
 EOF
 }
 
-resource "aws_iam_role_policy" "policy-sts-allow-get-token" {
+resource "aws_iam_policy" "policy-sts-allow-get-token" {
   name = "${local.name_suffix}-policy-sts-allow-get-token"
-  role = aws_iam_role.role-access-to-s3-bucket.name
-
   policy = <<EOF
 {
     "Version": "2012-10-17",
@@ -287,30 +271,12 @@ EOF
 # IAM Access do RDS
 resource "aws_iam_role" "role-access-to-db-ken" {
   name = "${local.name_suffix}-role-access-to-db-ken"
-  assume_role_policy = <<EOF
-{
-  "Version": "2012-10-17",
-  "Statement": [
-    {
-      "Effect": "Allow",
-      "Principal": {
-        "Service": "ecs-tasks.amazonaws.com"
-      },
-      "Action": "sts:AssumeRole"
-    }
-  ]
-}
-EOF
+  assume_role_policy = data.aws_iam_policy_document.instance-assume-role-policy.json
+  managed_policy_arns = ["${aws_iam_policy.policy-access-to-db-ken.arn}"]
 }
 
-resource "aws_iam_instance_profile" "instanceprofile-rds" {
-  name = "${local.name_suffix}-instanceprofile-rds"
-  role = aws_iam_role.role-access-to-db-ken.name
-}
-
-resource "aws_iam_role_policy" "policy-access-to-db-ken" {
+resource "aws_iam_policy" "policy-access-to-db-ken" {
   name = "${local.name_suffix}-policy-access-to-db-ken"
-  role = aws_iam_role.role-access-to-db-ken.name
   depends_on = [
     aws_db_instance.db
   ]
@@ -333,31 +299,12 @@ EOF
 # IAM ECS exec instance role
 resource "aws_iam_role" "role-task-exec" {
   name = "${local.name_suffix}-role-task-exec"
-  assume_role_policy = <<EOF
-{
-  "Version": "2012-10-17",
-  "Statement": [
-    {
-      "Effect": "Allow",
-      "Principal": {
-        "Service": "ecs-tasks.amazonaws.com"
-      },
-      "Action": "sts:AssumeRole"
-    }
-  ]
-}
-EOF
+  assume_role_policy = data.aws_iam_policy_document.instance-assume-role-policy.json
+  managed_policy_arns = ["${aws_iam_policy.policy-ssm-allow-get-params.arn}"]
 }
 
-resource "aws_iam_instance_profile" "instanceprofile-task-exec" {
-  name = "${local.name_suffix}-instanceprofile-task-exec"
-  role = aws_iam_role.role-task-exec.name
-}
-
-resource "aws_iam_role_policy" "policy-ssm-allow-get-params" {
+resource "aws_iam_policy" "policy-ssm-allow-get-params" {
   name = "${local.name_suffix}-policy-ssm-allow-get-params"
-  role = aws_iam_role.role-task-exec.name
-
   policy = <<EOF
 {
     "Version": "2012-10-17",
@@ -424,15 +371,15 @@ resource "aws_db_instance" "db" {
 
 # EC2 #
 # EC2 bastion
-resource "aws_instance" "web" {
-  ami = data.aws_ami.ubuntu.id
-  instance_type = "t2.nano"
-  associate_public_ip_address = true
-  key_name = var.key_name
-  security_groups  = ["${aws_security_group.sg-ecs.id}", "${aws_security_group.sg-ssh-bastion.id}"]
-  subnet_id = aws_subnet.subnet1-public.id
-  tags = { Name = "${local.name_suffix}-ec2-bastion" }
-}
+# resource "aws_instance" "bastion" {
+#   ami = data.aws_ami.ubuntu.id
+#   instance_type = "t2.nano"
+#   associate_public_ip_address = true
+#   key_name = var.key_name
+#   vpc_security_group_ids = ["${aws_security_group.sg-ecs.id}", "${aws_security_group.sg-ssh-bastion.id}"]
+#   subnet_id = aws_subnet.subnet1-public.id
+#   tags = { Name = "${local.name_suffix}-ec2-bastion" }
+# }
 
 
 # ECS CLUSTER #
@@ -499,12 +446,12 @@ resource "aws_ecs_task_definition" "td-fargate-app-db" {
       essential   = true
       environment = [
         {
-            "name" = "RDS_USR",
+            "name" = "RDS_USER",
             "value" = "ken"
         },
         {
             "name" = "RDS_ENDPOINT",
-            "value" = "${aws_db_instance.db.endpoint}"
+            "value" = "${aws_db_instance.db.address}"
         },
         {
             "name" = "RDS_DBNAME",
@@ -683,7 +630,7 @@ resource "aws_lb_listener_rule" "static" {
 
   condition {
     path_pattern {
-      values = ["/s3/*"]
+      values = ["/s3"]
     }
   }
 }
