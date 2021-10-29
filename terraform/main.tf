@@ -23,7 +23,7 @@ module "iam" {
   owner = var.owner
   s3_bucket_name = local.s3_bucket_name
   db_region = var.region
-  db_instance_id = module.postgres.db_instance_id
+  db_resource_id = module.postgres.db_resource_id
   db_username = "ken"
 }
 

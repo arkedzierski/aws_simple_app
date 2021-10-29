@@ -13,9 +13,9 @@ variable "db_region" {
     description = "Region of DB instance to allow access role."
 }
 
-variable "db_instance_id" {
+variable "db_resource_id" {
     type = string
-    description = "ID of DB instance to allow access role."
+    description = "Resource ID of DB instance to allow access role."
 }
 
 variable "db_username" {

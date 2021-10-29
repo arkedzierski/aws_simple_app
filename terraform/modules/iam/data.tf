@@ -45,7 +45,7 @@ data "aws_iam_policy_document" "access-to-db-ken" {
   statement {
     sid = "0"
     actions = ["rds-db:connect"]
-    resources = ["arn:aws:rds-db:${var.db_region}:${data.aws_caller_identity.current.account_id}:dbuser:${var.db_instance_id}/${var.db_username}"]
+    resources = ["arn:aws:rds-db:${var.db_region}:${data.aws_caller_identity.current.account_id}:dbuser:${var.db_resource_id}/${var.db_username}"]
   }
 }
 

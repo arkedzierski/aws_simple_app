@@ -15,7 +15,9 @@ resource "aws_ecs_task_definition" "td-fargate-app-s3" {
   memory = 512
   execution_role_arn = var.role_task_exec_arn
   task_role_arn = var.role_access_to_s3_bucket_arn
-  container_definitions = jsonencode("[{${data.template_file.fargate-app-s3.rendered}}]")
+  container_definitions = <<EOT
+      [${data.template_file.fargate-app-s3.rendered}]
+EOT
 }
 
 # Task definition db
@@ -27,7 +29,9 @@ resource "aws_ecs_task_definition" "td-fargate-app-db" {
   memory = 512
   execution_role_arn = var.role_task_exec_arn
   task_role_arn = var.role_access_to_db_arn
-  container_definitions = jsonencode("[{${data.template_file.fargate-app-db.rendered}}, {${data.template_file.fargate-app-nginx.rendered}}]")
+  container_definitions = <<EOT
+      [${data.template_file.fargate-app-db.rendered}, ${data.template_file.fargate-app-nginx.rendered}]
+EOT
 }
 
 # ECS service db
@@ -49,7 +53,7 @@ resource "aws_ecs_service" "service-fargate-db" {
  
  load_balancer {
    target_group_arn = aws_alb_target_group.tg-fargate-app-db.arn
-   container_name = "${var.owner}-container-fargate-app-db-ngnix"
+   container_name = "${var.owner}-container-fargate-app-db-nginx"
    container_port = 80
  }
  
