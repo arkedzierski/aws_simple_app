@@ -1,7 +1,8 @@
 ##################################################################################
-# OUTPUT
+# LOCALS
 ##################################################################################
 
-output "aws_elb_public_dns" {
-  value = module.ecs.aws_lb_public_dns
+locals {
+  s3_bucket_name = "${var.owner}-s3-${random_integer.rand.result}"
+  db_name = "${var.owner}-db-${random_integer.rand.result}"
 }

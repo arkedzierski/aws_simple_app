@@ -2,47 +2,40 @@
 # VARIABLES
 ##################################################################################
 
-variable "postgres_pass" {}
-
-variable "key_name" {}
-variable "region" {}
-variable "network_address_space" {}
-variable "subnet1_prv_address_space" {}
-variable "subnet2_prv_address_space" {}
-variable "subnet1_public_address_space" {}
-variable "subnet2_public_address_space" {}
-variable "owner" {}
-variable "container_image_prefix" {}
-variable "container_env_param_prefix" {}
-variable cloudwatch_group {}
-
-variable "ip-pgs-vpn" {
-  default = "188.114.87.23/32"
+# General
+variable "region" {
+  type = string
+  description = "Used AWS region"
+}
+variable "owner" {
+  type = string
+  description = "Name of owner used in resources name and tag Owner"
 }
 
-##################################################################################
-# PROVIDERS
-##################################################################################
+# S3 bucket
+# S3 instance name see locals
 
-provider "aws" {
-  region     = var.region
-  default_tags {
-    tags = {
-      Owner = var.owner
-    }
-  }
+# RDS postgres
+# DB instance name see locals
+variable "db_password" {
+  type = string
+  description = "Master user password for database"
 }
 
-##################################################################################
-# LOCALS
-##################################################################################
+# EC2 bastion
+variable "key_name" {
+  type = string
+  description = "Key Pairs name for bastion host"
+}
 
-locals {
-  common_tags = {
-    Owner = var.owner
-  }
+# VPC
+variable "access_public_ip" {
+  type = string
+  description = "Public IP access to Application LoadBalancer and Bastion host over SSH."
+}
 
-  name_suffix = "${local.common_tags["Owner"]}"
-  s3_bucket_name = "${local.common_tags["Owner"]}-s3-${random_integer.rand.result}"
-  db_name = "${local.common_tags["Owner"]}-db-${random_integer.rand.result}"
+# ECS
+variable "container_image_prefix" {
+  type = string
+  description = "Image path to ECR."
 }

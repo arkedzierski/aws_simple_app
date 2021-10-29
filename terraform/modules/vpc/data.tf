@@ -1,7 +1,5 @@
 ##################################################################################
-# OUTPUT
+# DATA
 ##################################################################################
 
-output "aws_elb_public_dns" {
-  value = module.ecs.aws_lb_public_dns
-}
+data "aws_availability_zones" "available" {}

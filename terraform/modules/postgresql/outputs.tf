@@ -2,6 +2,10 @@
 # OUTPUT
 ##################################################################################
 
-output "aws_elb_public_dns" {
-  value = module.ecs.aws_lb_public_dns
+output "db_instance_id" {
+  value = aws_db_instance.db.id
+}
+
+output "db_instance_address" {
+  value = aws_db_instance.db.address
 }
