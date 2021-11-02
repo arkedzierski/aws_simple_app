@@ -1,10 +1,13 @@
 from flask import Flask, render_template, abort, jsonify, request, url_for, redirect
 from flask_sqlalchemy import SQLAlchemy
+from flask_migrate import Migrate
 
 import urllib
 import datetime
 import boto3
 import os
+
+import sqlalchemy
 
 RDS_ENDPOINT = os.environ.get('RDS_ENDPOINT')
 RDS_USR = os.environ.get('RDS_USER')
@@ -29,6 +32,7 @@ app.config['SQLALCHEMY_DATABASE_URI'] = f'postgresql://{RDS_USR}:{passwd}@{RDS_E
 
 #SQLAlchemy db model
 db = SQLAlchemy(app)
+migrate = Migrate(app, db)
 
 class Rds_images(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -48,7 +52,12 @@ def root():
 # Show db rows
 @app.route('/db')
 def index():
-    images = db.session.execute('SELECT * FROM rds_images LIMIT 10;')
+    try:
+        images = db.session.execute('SELECT * FROM rds_images LIMIT 10;')
+    except sqlalchemy.exc.ProgrammingError as e:
+        print(e)
+        db.create_all()
+        images = False
     try:
         images = [row[1] for row in images]
     except Exception as e:
@@ -73,7 +82,12 @@ def imageadd():
 # Return number of rows as json
 @app.route('/num')
 def db_entry_number():
-    images_num = db.session.execute('SELECT COUNT(*) FROM rds_images;').first().count
+    try:
+        images_num = db.session.execute('SELECT COUNT(*) FROM rds_images;').first().count
+    except sqlalchemy.exc.ProgrammingError as e:
+        print(e)
+        db.create_all()
+        images_num = 0
     return jsonify({'Total': images_num})
 
 # Health check for Target Group

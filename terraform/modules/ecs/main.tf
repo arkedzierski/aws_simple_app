@@ -167,3 +167,17 @@ resource "aws_lb_listener_rule" "static" {
     }
   }
 }
+
+# CloudWatch log group
+
+resource "aws_cloudwatch_log_group" "apps-s3" {
+  name = "/ecs/${var.owner}-fargate-apps-s3"
+}
+
+resource "aws_cloudwatch_log_group" "apps-db" {
+  name = "/ecs/${var.owner}-fargate-apps-db"
+}
+
+resource "aws_cloudwatch_log_group" "apps-db-nginx" {
+  name = "/ecs/${var.owner}-fargate-apps-db-nginx"
+}

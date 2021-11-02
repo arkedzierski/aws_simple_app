@@ -63,6 +63,14 @@ resource "aws_security_group" "sg_psql" {
     security_groups = ["${aws_security_group.sg-ecs.id}"]
   }
 
+  # # Access from VPN
+  # ingress {
+  #   from_port   = 5432
+  #   to_port     = 5432
+  #   protocol    = "tcp"
+  #   cidr_blocks = [var.access_public_ip]
+  # }
+
   #allow all outbound
   egress {
     from_port   = 0

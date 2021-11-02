@@ -42,9 +42,13 @@ module "postgres" {
 
   owner = var.owner
   db_name = local.db_name
-  db_password = var.db_password
+  db_master_password = var.db_password
   subnet_ids = [module.vpc.subnetA_prv_id, module.vpc.subnetB_prv_id ]
   security_group_ids = [module.vpc.secgrp_psql_id]
+  rds_username = "ken"
+  rds_dbname = "ec2"
+  ec2_public_ip = module.ec2.instance_public_ip
+  ec2_host_key = file(var.path_pair_key)
 }
 
 # EC2 #

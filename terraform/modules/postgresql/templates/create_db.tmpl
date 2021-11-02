@@ -1,0 +1,5 @@
+\set AUTOCOMMIT on
+CREATE DATABASE ${rds_dbname};
+CREATE USER ${rds_username};
+GRANT rds_iam TO ${rds_username};
+ALTER DATABASE ${rds_dbname} OWNER TO ${rds_username};

@@ -22,6 +22,11 @@ variable "db_password" {
   description = "Master user password for database"
 }
 
+variable "path_pair_key" {
+  type = string
+  description = "Path to local key pair for bastion host"
+}
+
 # EC2 bastion
 variable "key_name" {
   type = string
