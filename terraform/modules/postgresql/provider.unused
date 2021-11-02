@@ -1,0 +1,20 @@
+terraform {
+  required_version = ">= 0.14.1"
+
+  required_providers {
+    postgresql = {
+      source  = "cyrilgdn/postgresql"
+      version = ">=1.13.0"
+    }
+  }
+}
+
+provider "postgresql" {
+    scheme = "awspostgres"
+    host = "${aws_db_instance.db.address}"
+    port = 5432
+    username = "${var.db_master_user}"
+    password = "${var.db_master_password}"
+    sslmode = "require"
+    superuser = false
+}

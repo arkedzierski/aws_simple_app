@@ -1,0 +1,22 @@
+# Create App User
+resource "postgresql_role" "application_role" {
+    name = "${var.rds_username}"
+    login = true
+    encrypted_password = true
+    roles = ["rds_iam"]
+    depends_on = [
+        aws_db_instance.db
+    ]
+}
+# Create Database 
+resource "postgresql_database" "app_db" {
+    name = "${var.rds_dbname}"
+    owner = "${var.rds_username}"
+    template = "template0"
+    lc_collate = "C"
+    connection_limit = -1
+    allow_connections = true
+    depends_on = [
+        aws_db_instance.db
+    ]
+}

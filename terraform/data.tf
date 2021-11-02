@@ -2,8 +2,6 @@
 # DATA
 ##################################################################################
 
-data "aws_availability_zones" "available" {}
-
 data "aws_caller_identity" "current" {}
 
 data "aws_ami" "ubuntu" {
@@ -20,15 +18,3 @@ data "aws_ami" "ubuntu" {
     values = ["hvm"]
   }
 }
-
-data "aws_iam_policy_document" "instance-assume-role-policy" {
-  statement {
-    actions = ["sts:AssumeRole"]
-
-    principals {
-      type        = "Service"
-      identifiers = ["ecs-tasks.amazonaws.com"]
-    }
-  }
-}
-

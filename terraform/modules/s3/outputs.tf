@@ -2,6 +2,6 @@
 # OUTPUT
 ##################################################################################
 
-output "aws_elb_public_dns" {
-  value = module.ecs.aws_lb_public_dns
+output "s3_bucket_id" {
+  value = aws_s3_bucket.s3-bucket.id
 }

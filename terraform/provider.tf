@@ -1,7 +1,12 @@
 ##################################################################################
-# OUTPUT
+# PROVIDERS
 ##################################################################################
 
-output "aws_elb_public_dns" {
-  value = module.ecs.aws_lb_public_dns
+provider "aws" {
+  region     = var.region
+  default_tags {
+    tags = {
+      Owner = var.owner
+    }
+  }
 }

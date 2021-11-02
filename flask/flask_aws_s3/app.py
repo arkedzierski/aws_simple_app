@@ -120,9 +120,11 @@ def s3_list_files(s3_bucket_name):
     """
     client = s3_client()
     contents = []
-    for item in client.list_objects(Bucket=s3_bucket_name)['Contents']:
-        contents.append(item)
-
+    try:
+        for item in client.list_objects(Bucket=s3_bucket_name)['Contents']:
+            contents.append(item)
+    except KeyError as e:
+        contents = []
     return contents
 
 # Default 404 if page doesn't exists
