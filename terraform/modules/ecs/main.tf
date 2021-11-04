@@ -60,6 +60,10 @@ resource "aws_ecs_service" "service-fargate-db" {
  lifecycle {
    ignore_changes = [task_definition, desired_count]
  }
+
+ service_registries {
+   registry_arn = aws_service_discovery_service.flaskdb.arn
+ }
 }
 
 # ECS service s3
@@ -180,4 +184,30 @@ resource "aws_cloudwatch_log_group" "apps-db" {
 
 resource "aws_cloudwatch_log_group" "apps-db-nginx" {
   name = "/ecs/${var.owner}-fargate-apps-db-nginx"
+}
+
+# Service Discovery for DB app
+
+resource "aws_service_discovery_private_dns_namespace" "servcediscovery_private_dns" {
+  name        = "akedzierski.net"
+  vpc         = var.vpc_id
+}
+
+resource "aws_service_discovery_service" "flaskdb" {
+  name = "flaskdb"
+
+  dns_config {
+    namespace_id = aws_service_discovery_private_dns_namespace.servcediscovery_private_dns.id
+
+    dns_records {
+      ttl  = 10
+      type = "A"
+    }
+
+    routing_policy = "MULTIVALUE"
+  }
+
+  health_check_custom_config {
+    failure_threshold = 1
+  }
 }

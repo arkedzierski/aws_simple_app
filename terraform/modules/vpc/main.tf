@@ -5,6 +5,7 @@
 # Infra
 resource "aws_vpc" "vpc" {
   cidr_block = var.network_address_space
+  enable_dns_hostnames = true
 
   tags = { Name = "${var.owner}-vpc" }
 }

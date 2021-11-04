@@ -13,7 +13,7 @@ data "template_file" "fargate-app-s3" {
         },
         {
             "name": "LB_ENDPOINT",
-            "value": "${aws_lb.lb-apps.dns_name}"
+            "value": "${aws_service_discovery_service.flaskdb.name}.${aws_service_discovery_private_dns_namespace.servcediscovery_private_dns.name}"
         },
         {
             "name": "FLASK_ENV",

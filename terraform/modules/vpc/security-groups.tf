@@ -40,6 +40,14 @@ resource "aws_security_group" "sg-ecs" {
     security_groups = ["${aws_security_group.sg-lb.id}"]
   }
 
+  # Allow traffic between containers
+  ingress {
+      from_port = 0
+      to_port = 0
+      protocol = -1
+      self = true
+  }
+
   #allow all outbound
   egress {
     from_port   = 0
