@@ -4,11 +4,11 @@
 
 # General
 variable "region" {
-  type = string
+  type        = string
   description = "Used AWS region"
 }
 variable "owner" {
-  type = string
+  type        = string
   description = "Name of owner used in resources name and tag Owner"
 }
 
@@ -18,29 +18,29 @@ variable "owner" {
 # RDS postgres
 # DB instance name see locals
 variable "db_password" {
-  type = string
+  type        = string
   description = "Master user password for database"
 }
 
 variable "path_pair_key" {
-  type = string
+  type        = string
   description = "Path to local key pair for bastion host"
 }
 
 # EC2 bastion
 variable "key_name" {
-  type = string
+  type        = string
   description = "Key Pairs name for bastion host"
 }
 
 # VPC
 variable "access_public_ip" {
-  type = string
+  type        = string
   description = "Public IP access to Application LoadBalancer and Bastion host over SSH."
 }
 
 # ECS
 variable "container_image_prefix" {
-  type = string
+  type        = string
   description = "Image path to ECR."
 }

@@ -6,20 +6,12 @@ output "vpc_id" {
   value = aws_vpc.vpc.id
 }
 
-output "subnetA_prv_id" {
-  value = aws_subnet.subnetA-prv.id
+output "subnets_private_ids" {
+  value = values(aws_subnet.subnet-prvate)[*].id
 }
 
-output "subnetB_prv_id" {
-  value = aws_subnet.subnetB-prv.id
-}
-
-output "subnetA_public_id" {
-  value = aws_subnet.subnetA-public.id
-}
-
-output "subnetB_public_id" {
-  value = aws_subnet.subnetB-public.id
+output "subnets_public_ids" {
+  value = values(aws_subnet.subnet-public)[*].id
 }
 
 output "secgrp_ecs_id" {
