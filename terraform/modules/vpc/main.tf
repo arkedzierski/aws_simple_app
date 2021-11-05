@@ -78,5 +78,5 @@ resource "aws_route_table" "rtb-public" {
 resource "aws_route_table_association" "rta-subnet-public" {
   for_each       = var.subnet_idxs
   subnet_id      = aws_subnet.subnet-public[each.key].id
-  route_table_id = aws_route_table.rtb-prv.id
+  route_table_id = aws_route_table.rtb-public.id
 }
