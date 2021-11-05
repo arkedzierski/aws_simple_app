@@ -7,7 +7,7 @@
 resource "aws_security_group" "sg-lb" {
   name   = "${var.owner}-sg-lb"
   vpc_id = aws_vpc.vpc.id
-  tags = { Name = "${var.owner}-sg-lb" }
+  tags   = { Name = "${var.owner}-sg-lb" }
 
   #Allow HTTP from VPN, NAT and local
   ingress {
@@ -30,14 +30,22 @@ resource "aws_security_group" "sg-lb" {
 resource "aws_security_group" "sg-ecs" {
   name   = "${var.owner}-sg-ecs-containers"
   vpc_id = aws_vpc.vpc.id
-  tags = { Name = "${var.owner}-sg-ecs" }
+  tags   = { Name = "${var.owner}-sg-ecs" }
 
   #Allow HTTP from loadbalancer
   ingress {
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
+    from_port       = 0
+    to_port         = 0
+    protocol        = "-1"
     security_groups = ["${aws_security_group.sg-lb.id}"]
+  }
+
+  # Allow traffic between containers
+  ingress {
+    from_port = 0
+    to_port   = 0
+    protocol  = -1
+    self      = true
   }
 
   #allow all outbound
@@ -53,13 +61,13 @@ resource "aws_security_group" "sg-ecs" {
 resource "aws_security_group" "sg_psql" {
   name   = "${var.owner}-sg_psql"
   vpc_id = aws_vpc.vpc.id
-  tags = { Name = "${var.owner}-sg-psql" }
+  tags   = { Name = "${var.owner}-sg-psql" }
 
   #Allow HTTP from privte network
   ingress {
-    from_port   = 5432
-    to_port     = 5432
-    protocol    = "tcp"
+    from_port       = 5432
+    to_port         = 5432
+    protocol        = "tcp"
     security_groups = ["${aws_security_group.sg-ecs.id}"]
   }
 
@@ -84,7 +92,7 @@ resource "aws_security_group" "sg_psql" {
 resource "aws_security_group" "sg-ssh-bastion" {
   name   = "${var.owner}-sg-ssh-bastion"
   vpc_id = aws_vpc.vpc.id
-  tags = { Name = "${var.owner}-ssh-bastion" }
+  tags   = { Name = "${var.owner}-ssh-bastion" }
 
   # SSH access from VPN
   ingress {
