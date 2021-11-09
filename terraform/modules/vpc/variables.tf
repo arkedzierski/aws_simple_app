@@ -8,37 +8,20 @@ variable "access_public_ip" {
   description = "Public IP access to Application LoadBalancer and Bastion host over SSH."
 }
 
-variable "network_address_space" {
+variable "vpc_cidr" {
   type        = string
-  description = "VPC network address space"
+  description = "The CIDR block for the VPC. Default is 10.0.0.0/16"
   default     = "10.0.0.0/16"
 }
-variable "subnetA_prv_address_space" {
-  type        = string
-  description = "Private subnet A address space"
-  default     = "10.0.1.0/24"
-}
-variable "subnetB_prv_address_space" {
-  type        = string
-  description = "Private subnet B address space"
-  default     = "10.0.2.0/24"
-}
-variable "subnetA_public_address_space" {
-  type        = string
-  description = "Public subnet A address space"
-  default     = "10.0.11.0/24"
-}
-variable "subnetB_public_address_space" {
-  type        = string
-  description = "Public subnet B address space"
-  default     = "10.0.12.0/24"
+
+variable "private_subnets" {
+  type        = list(string)
+  description = "A list of private subnets inside the VPC. Default is [\"10.0.1.0/24\", \"10.0.2.0/24\"]"
+  default     = ["10.0.1.0/24", "10.0.2.0/24"]
 }
 
-variable "subnet_idxs" {
-  type        = map(any)
-  description = "Subnet indexes keypair"
-  default = {
-    "a" = 0,
-    "b" = 1
-  }
+variable "public_subnets" {
+  type        = list(string)
+  description = "A list of public subnets inside the VPC. Default is [\"10.0.1.0/24\", \"10.0.2.0/24\"]"
+  default     = ["10.0.11.0/24", "10.0.12.0/24"]
 }
