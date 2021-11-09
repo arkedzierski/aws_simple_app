@@ -4,7 +4,7 @@
 
 # Infra
 resource "aws_vpc" "vpc" {
-  cidr_block           = var.network_address_space
+  cidr_block           = var.vpc_cidr
   enable_dns_hostnames = true
 
   tags = { Name = "${var.owner}-vpc" }
@@ -17,19 +17,19 @@ resource "aws_internet_gateway" "igw" {
 }
 
 resource "aws_subnet" "subnet-prvate" {
-  for_each          = var.subnet_idxs
+  for_each          = toset(var.private_subnets)
   vpc_id            = aws_vpc.vpc.id
-  cidr_block        = "10.0.${each.value}.0/24"
-  availability_zone = data.aws_availability_zones.available.names[each.value]
-  tags              = { Name = "${var.owner}-subnet-${each.key}-prv" }
+  cidr_block        = each.key
+  availability_zone = data.aws_availability_zones.available.names[index(var.private_subnets, each.key)]
+  tags              = { Name = "${var.owner}-subnet-${data.aws_availability_zones.available.names[index(var.private_subnets, each.key)]}-prv" }
 }
 
 resource "aws_subnet" "subnet-public" {
-  for_each          = var.subnet_idxs
+  for_each          = toset(var.public_subnets)
   vpc_id            = aws_vpc.vpc.id
-  cidr_block        = "10.0.1${each.value}.0/24"
-  availability_zone = data.aws_availability_zones.available.names[each.value]
-  tags              = { Name = "${var.owner}-subnet-${each.key}-public" }
+  cidr_block        = each.key
+  availability_zone = data.aws_availability_zones.available.names[index(var.public_subnets, each.key)]
+  tags              = { Name = "${var.owner}-subnet-${data.aws_availability_zones.available.names[index(var.public_subnets, each.key)]}-public" }
 }
 
 resource "aws_eip" "eip" {
@@ -58,7 +58,7 @@ resource "aws_route_table" "rtb-prv" {
 }
 
 resource "aws_route_table_association" "rta-subnet-prvate" {
-  for_each       = var.subnet_idxs
+  for_each       = toset(var.private_subnets)
   subnet_id      = aws_subnet.subnet-prvate[each.key].id
   route_table_id = aws_route_table.rtb-prv.id
 }
@@ -76,7 +76,7 @@ resource "aws_route_table" "rtb-public" {
 }
 
 resource "aws_route_table_association" "rta-subnet-public" {
-  for_each       = var.subnet_idxs
+  for_each       = toset(var.public_subnets)
   subnet_id      = aws_subnet.subnet-public[each.key].id
   route_table_id = aws_route_table.rtb-public.id
 }
